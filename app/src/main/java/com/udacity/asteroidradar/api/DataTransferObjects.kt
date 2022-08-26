@@ -1,4 +1,3 @@
-package com.example.android.devbyteviewer.network
 
 import com.squareup.moshi.JsonClass
 import com.udacity.asteroidradar.Asteroid

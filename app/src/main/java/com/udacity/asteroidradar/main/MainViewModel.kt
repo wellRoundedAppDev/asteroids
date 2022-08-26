@@ -1,26 +1,26 @@
 package com.udacity.asteroidradar.main
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.database.getDataBase
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _astroids: MutableLiveData<List<Asteroid>> = MutableLiveData<List<Asteroid>>()
-
-    val astroids: LiveData<List<Asteroid>>
-        get() = _astroids
+//    private val _astroids: MutableLiveData<List<Asteroid>> = MutableLiveData<List<Asteroid>>()
+//
+//    val astroids: LiveData<List<Asteroid>>
+//        get() = _astroids
 
 
     private val _picOfDay: MutableLiveData<PictureOfDay> = MutableLiveData<PictureOfDay>()
@@ -41,24 +41,37 @@ class MainViewModel : ViewModel() {
     }
 
 
+    private val database = getDataBase(application)
+    private val asteroidsRepository = AsteroidsRepository(database)
+
     init {
         getAsteroids()
         getPicOfDay()
     }
 
+
+
     private fun getAsteroids() {
+
         viewModelScope.launch {
-            try {
-                var jsonString = AsteroidApi.retrofitService.getAsteroids(
-                    Constants.API_KEY,)
-
-                _astroids.value = parseAsteroidsJsonResult(JSONObject(jsonString))
-
-            }catch (e: Exception){
-                Log.i("error", e.message.toString())
-            }
+            asteroidsRepository.refreshAsteroids()
         }
-    }
+
+
+//        viewModelScope.launch {
+//            try {
+//                var jsonString = AsteroidApi.retrofitService.getAsteroids(
+//                    Constants.API_KEY,)
+//
+//                _astroids.value = parseAsteroidsJsonResult(JSONObject(jsonString))
+//
+//            }catch (e: Exception){
+//                Log.i("error", e.message.toString())
+//            }
+//        }
+  }
+    val astroids = asteroidsRepository.asteroids
+
 
     private fun getPicOfDay() {
         viewModelScope.launch {

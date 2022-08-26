@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.udacity.asteroidradar.Asteroid
 
-@Entity
+@Entity(tableName = "database_asteroid")
 data class DataBaseAsteroid(
     @PrimaryKey
     val id: Long,

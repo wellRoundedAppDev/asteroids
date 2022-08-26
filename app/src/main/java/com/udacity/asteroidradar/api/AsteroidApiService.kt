@@ -5,6 +5,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
+import kotlinx.coroutines.Deferred
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -25,8 +26,6 @@ private val _retrofit = Retrofit.Builder()
     .build()
 
 interface AsteroidApiService{
-
-
 
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroids(
