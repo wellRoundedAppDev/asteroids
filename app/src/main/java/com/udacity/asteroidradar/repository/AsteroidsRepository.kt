@@ -40,4 +40,5 @@ class AsteroidsRepository(private val database: AsteroidDatabase) {
             }
         }
     }
+
 }

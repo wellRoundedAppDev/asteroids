@@ -45,8 +45,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val asteroidsRepository = AsteroidsRepository(database)
 
     init {
-        getAsteroids()
         getPicOfDay()
+        getAsteroids()
     }
 
 

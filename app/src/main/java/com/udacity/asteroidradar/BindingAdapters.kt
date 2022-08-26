@@ -16,7 +16,6 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?) {
         val adapter =  recyclerView.adapter as AsteroidsAdapter
         adapter.submitList(data)
     }
-
 }
 
 @BindingAdapter("picOfDay")
@@ -29,6 +28,7 @@ fun bindPicOfDayImage(imgView: ImageView, imgUrl: String?) {
 
     }
 }
+
 
 
 @BindingAdapter("statusIcon")
@@ -48,6 +48,8 @@ fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
         imageView.setImageResource(R.drawable.asteroid_safe)
     }
 }
+
+
 
 @BindingAdapter("astronomicalUnitText")
 fun bindTextViewToAstronomicalUnit(textView: TextView, number: Double) {

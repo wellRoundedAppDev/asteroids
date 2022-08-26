@@ -41,4 +41,6 @@ class DetailFragment : Fragment() {
             .setPositiveButton(android.R.string.ok, null)
         builder.create().show()
     }
+
+
 }
