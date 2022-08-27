@@ -8,6 +8,9 @@
         <variable
             name="asteroid"
             type="com.udacity.asteroidradar.Asteroid" />
+        <variable
+            name="viewmodel"
+            type="com.udacity.asteroidradar.main.MainViewModel" />
     </data>
 
 
@@ -28,6 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:statusIcon="@{asteroid.potentiallyHazardous}"
+            android:contentDescription="@{viewmodel.getContentDescOfAsteroidsStatuesImage(asteroid.potentiallyHazardous)}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

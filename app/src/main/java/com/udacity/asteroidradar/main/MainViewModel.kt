@@ -9,6 +9,7 @@ import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.getDataBase
+import com.udacity.asteroidradar.getTimeNowInStringFormat
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -22,6 +23,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 //    val astroids: LiveData<List<Asteroid>>
 //        get() = _astroids
 
+
+    lateinit var astroids: LiveData<List<Asteroid>>
 
     private val _picOfDay: MutableLiveData<PictureOfDay> = MutableLiveData<PictureOfDay>()
 
@@ -42,44 +45,53 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 
     private val database = getDataBase(application)
-    private val asteroidsRepository = AsteroidsRepository(database)
+    private var asteroidsRepository = AsteroidsRepository(database)
 
     init {
+        astroids = asteroidsRepository.asteroids
         getPicOfDay()
-        getAsteroids()
+        getAllAsteroids()
     }
 
 
 
-    private fun getAsteroids() {
+    fun getAllAsteroids() {
 
         viewModelScope.launch {
             asteroidsRepository.refreshAsteroids()
         }
+        astroids = asteroidsRepository.asteroids
+
+    }
+
+    fun getDailyAsteroids() {
+        viewModelScope.launch {
+            asteroidsRepository.getDailyAsteroids()
+        }
+        astroids = asteroidsRepository.asteroids
 
 
-//        viewModelScope.launch {
-//            try {
-//                var jsonString = AsteroidApi.retrofitService.getAsteroids(
-//                    Constants.API_KEY,)
-//
-//                _astroids.value = parseAsteroidsJsonResult(JSONObject(jsonString))
-//
-//            }catch (e: Exception){
-//                Log.i("error", e.message.toString())
-//            }
-//        }
-  }
-    val astroids = asteroidsRepository.asteroids
+    }
 
 
-    private fun getPicOfDay() {
+
+
+        private fun getPicOfDay() {
         viewModelScope.launch {
             try {
                 _picOfDay.value = AsteroidApi.retrofitService.getPictureOfTheDay(Constants.API_KEY)
             }catch (e: Exception){
 
             }
+        }
+    }
+
+    fun getContentDescOfAsteroidsStatuesImage(isHazardous: Boolean): String{
+
+        if (isHazardous) {
+            return "Potentially hazardous asteroid"
+        } else {
+            return "Not hazardous asteroid"
         }
     }
 

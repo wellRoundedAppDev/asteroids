@@ -15,6 +15,7 @@ import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.asDomainModel
+import com.udacity.asteroidradar.getTimeNowInStringFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -22,23 +23,45 @@ import java.lang.Exception
 
 class AsteroidsRepository(private val database: AsteroidDatabase) {
 
-    val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidDao.getAsteroids()){
+    var asteroids = Transformations.map(database.asteroidDao.getAllAsteroids()){
         it.asDomainModel()
     }
+
+
 
     suspend fun refreshAsteroids(){
         withContext(Dispatchers.IO){
             try {
-                var jsonString = AsteroidApi.retrofitService.getAsteroids(
+                var jsonString = AsteroidApi.retrofitService.getAllAsteroids(
                     Constants.API_KEY,)
 
-                val asteroids = NetworkAsteroidContainer(parseAsteroidsJsonResult(JSONObject(jsonString)))
-                database.asteroidDao.insertAll(*asteroids.asDatabaseModel())
+                var allAsteroids = NetworkAsteroidContainer(parseAsteroidsJsonResult(JSONObject(jsonString)))
+                database.asteroidDao.insertAll(*allAsteroids.asDatabaseModel())
+                asteroids = Transformations.map(database.asteroidDao.getAllAsteroids()){
+                    it.asDomainModel()
+                }
 
             }catch (e: Exception){
                 Log.i("error", e.message.toString())
             }
         }
     }
+
+    suspend fun getDailyAsteroids(){
+
+        withContext(Dispatchers.IO){
+            try {
+                var dailyAsteroids = database.asteroidDao.getDailyAsteroids(getTimeNowInStringFormat())
+                asteroids = Transformations.map(dailyAsteroids){
+                    it.asDomainModel()
+                }
+
+            }catch (e: Exception){
+                Log.i("error", e.message.toString())
+            }
+        }
+    }
+
+
 
 }

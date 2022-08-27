@@ -8,6 +8,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.bindAsteroidStatusImage
+import com.udacity.asteroidradar.databinding.AstroidItemBinding
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -22,6 +24,9 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding = FragmentMainBinding.inflate(inflater)
+        val itemBinding = AstroidItemBinding.inflate(inflater)
+        itemBinding.lifecycleOwner = this
+        itemBinding.viewmodel = viewModel
 
         binding.lifecycleOwner = this
 
@@ -53,6 +58,11 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.show_weekly_asteroids -> viewModel.getAllAsteroids()
+            R.id.show_daily_asteroids -> viewModel.getDailyAsteroids()
+            else -> viewModel.getAllAsteroids()
+        }
         return true
     }
 }
